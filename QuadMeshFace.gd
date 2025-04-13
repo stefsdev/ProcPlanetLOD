@@ -3,9 +3,8 @@ extends Node3D
 
 class_name QuadtreeNode
 
-
+@export var normal : Vector3 = Vector3.ZERO
 var focus_position_last: Vector3 = Vector3.ZERO
-
 @export var focus_position: Vector3 = Vector3.ZERO
 # Quadtree specific properties
 @export var quadtree_size: float = 512 #basically the size of the world
@@ -129,3 +128,7 @@ func update_chunks():
 	for chunk_id in chunks_to_remove:
 		chunks_list[chunk_id].queue_free()
 		chunks_list.erase(chunk_id)
+
+
+func _on_camera_3d_player_moved(position: Vector3) -> void:
+	focus_position = Vector3(position.x, 0, position.z)

@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3 uid="uid://dvep6gjo3qw70"]
+
+[ext_resource type="PackedScene" uid="uid://c3k6h84eqxyxm" path="res://planet.tscn" id="1_61qbc"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7i5qh"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_r3lf3"]
+sky_material = SubResource("ProceduralSkyMaterial_7i5qh")
+
+[sub_resource type="Environment" id="Environment_27fau"]
+background_mode = 2
+sky = SubResource("Sky_r3lf3")
+tonemap_mode = 2
+glow_enabled = true
+
+[node name="Main" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_27fau")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.927321, 0.374267, 0, -0.374267, 0.927321, 0, 2.5694, 6.22338)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+
+[node name="Planet" parent="." instance=ExtResource("1_61qbc")]

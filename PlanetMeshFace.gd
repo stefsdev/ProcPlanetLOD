@@ -4,6 +4,9 @@ class_name PlanetMeshFace
 
 
 @export var normal : Vector3
+@export var resolution : int = 5
+
+
 func regenerate_mesh(planet_data : PlanetData):
 	var arrays := []
 	arrays.resize(Mesh.ARRAY_MAX)
@@ -13,7 +16,7 @@ func regenerate_mesh(planet_data : PlanetData):
 	var normal_array := PackedVector3Array()
 	var index_array := PackedInt32Array()
 	
-	var resolution := planet_data.resolution
+	var resolution := resolution
 	
 	var num_vertices : int = resolution * resolution
 	var num_indices : int = (resolution-1) * (resolution-1) * 6

@@ -20,10 +20,10 @@ glow_enabled = true
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_27fau")
 
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.798856, 0.601523, 0, -0.601523, 0.798856, 0, 43.5694, 31.2234)
-
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.519325, 0.854577, 0, -0.854577, 0.519325, -0.31926, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.31926, 0, 0)
 
 [node name="Planet" parent="." instance=ExtResource("1_61qbc")]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 33.7893)

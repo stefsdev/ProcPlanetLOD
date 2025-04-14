@@ -12,7 +12,7 @@ var focus_position_last: Vector3 = Vector3.ZERO
 
 var chunks_list = {}
 var chunks_list_current = {}
-var material = preload("res://chunk_vis.tres")
+var material = preload("res://quadtree/chunk_vis.tres")
 
 # Placeholder for the quadtree structure
 var quadtree: QuadtreeChunk

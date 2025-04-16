@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://beepi147hgeaa"]
+
+[ext_resource type="Script" uid="uid://8p7i6ou2td1h" path="res://quadtree_sphere/PlanetMeshFace.gd" id="1_3k2iu"]
+
+[node name="Planet" type="Node3D"]
+
+[node name="Top" type="MeshInstance3D" parent="."]
+script = ExtResource("1_3k2iu")
+normal = Vector3(0, 1, 0)

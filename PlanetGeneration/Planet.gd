@@ -11,11 +11,11 @@ extends Node
 	get:
 		return planet_data
 
-func _on_resource_changed():
-	planet_data.min_height = 99999.0
-	planet_data.max_height = 0.0
-	for child in get_children():
-		var face = child as PlanetMeshFace
-		if face:
-			face.regenerate_mesh(planet_data)
-	
+#func _on_resource_changed():
+	#planet_data.min_height = 99999.0
+	#planet_data.max_height = 0.0
+	#for child in get_children():
+		#var face = child as PlanetMeshFace
+		#if face:
+			#face.regenerate_mesh(planet_data)
+	#

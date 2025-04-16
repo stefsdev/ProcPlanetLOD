@@ -31,7 +31,6 @@ script = ExtResource("2_0xm2m")
 [node name="QuadMeshFace" type="Node3D" parent="."]
 script = ExtResource("2_h2yge")
 focus_position = Vector3(229.185, 5.97, 230.345)
-quadtree_size = 1.0
 
 [connection signal="player_moved" from="Camera3D" to="Camera3D" method="_on_player_moved"]
 [connection signal="player_moved" from="Camera3D" to="QuadMeshFace" method="_on_camera_3d_player_moved"]

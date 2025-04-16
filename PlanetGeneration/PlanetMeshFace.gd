@@ -4,6 +4,11 @@ class_name PlanetMeshFace
 
 
 @export var normal : Vector3
+var planetdata = PlanetData.new()
+
+func _ready() -> void:
+	regenerate_mesh(planetdata)
+
 func regenerate_mesh(planet_data : PlanetData):
 	var arrays := []
 	arrays.resize(Mesh.ARRAY_MAX)
@@ -33,13 +38,9 @@ func regenerate_mesh(planet_data : PlanetData):
 			var pointOnUnitCube : Vector3 = normal + (percent.x-0.5) * 2.0 * axisA + (percent.y-0.5) * 2.0 * axisB
 			var pointOnUnitSphere = pointOnUnitCube.normalized()
 			var pointOnPlanet = planet_data.point_on_planet(pointOnUnitCube)
-			vertex_array[i] = pointOnPlanet  
-			#
-			#var l = pointOnPlanet.length()
-			#if l < planet_data.min_height:
-				#planet_data.min_height = l
-			#if l > planet_data.max_height:
-				#planet_data.max_height = l
+			vertex_array[i] = pointOnPlanet 
+			print("nix") 
+
 			if x != resolution-1 and y != resolution-1:
 				index_array[tri_index+2] = i
 				index_array[tri_index+1] = i+resolution+1
@@ -49,21 +50,6 @@ func regenerate_mesh(planet_data : PlanetData):
 				index_array[tri_index+4] = i+1
 				index_array[tri_index+3] = i+resolution+1
 				tri_index += 6
-				
-	#for a in range(0, index_array.size(), 3):
-		#var b : int = a + 1
-		#var c : int = a + 2
-		#var ab : Vector3 = vertex_array[index_array[b]] - vertex_array[index_array[a]]
-		#var bc : Vector3 = vertex_array[index_array[c]] - vertex_array[index_array[b]]
-		#var ca : Vector3 = vertex_array[index_array[a]] - vertex_array[index_array[c]]
-		#var cross_ab_bc : Vector3 = ab.cross(bc) * -1.0
-		#var cross_bc_ca : Vector3 = bc.cross(ca) * -1.0
-		#var cross_ca_ab : Vector3 = ca.cross(ab) * -1.0
-		#normal_array[index_array[a]] += cross_ab_bc + cross_bc_ca + cross_ca_ab
-		#normal_array[index_array[b]] += cross_ab_bc + cross_bc_ca + cross_ca_ab
-		#normal_array[index_array[c]] += cross_ab_bc + cross_bc_ca + cross_ca_ab
-	#for i in range(normal_array.size()):
-		#normal_array[i] = normal_array[i].normalized()
 		
 	arrays[Mesh.ARRAY_VERTEX] = vertex_array
 	arrays[Mesh.ARRAY_NORMAL] = normal_array

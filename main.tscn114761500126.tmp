@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://dvep6gjo3qw70"]
+[gd_scene load_steps=7 format=3 uid="uid://dvep6gjo3qw70"]
 
 [ext_resource type="Script" uid="uid://b0rvdi01boff4" path="res://quadtree/camera_nav.gd" id="2_0xm2m"]
 [ext_resource type="Script" uid="uid://bqsyqbiocgquw" path="res://quadtree/QuadMeshFace.gd" id="2_h2yge"]
+[ext_resource type="PackedScene" uid="uid://clhtnj8p2orf7" path="res://PlanetGeneration/planet.tscn" id="3_h2yge"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7i5qh"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -31,7 +32,8 @@ script = ExtResource("2_0xm2m")
 [node name="QuadMeshFace" type="Node3D" parent="."]
 script = ExtResource("2_h2yge")
 focus_position = Vector3(229.185, 5.97, 230.345)
-quadtree_size = 1.0
+
+[node name="Planet" parent="." instance=ExtResource("3_h2yge")]
 
 [connection signal="player_moved" from="Camera3D" to="Camera3D" method="_on_player_moved"]
 [connection signal="player_moved" from="Camera3D" to="QuadMeshFace" method="_on_camera_3d_player_moved"]

@@ -1,8 +1,7 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://c65662x76qmij"]
-
-[ext_resource type="Texture2D" uid="uid://drrdw7kjffump" path="res://quadtree/pngtree-diary-organization-a-vector-illustration-of-a-grid-pattern-in-black-png-image_12729900 (2).png" id="1_b0jny"]
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://c65662x76qmij"]
 
 [resource]
-albedo_texture = ExtResource("1_b0jny")
-uv1_scale = Vector3(0.1, 0.1, 0.1)
+albedo_color = Color(0.0367013, 0.214433, 0.228783, 1)
+roughness = 0.25
+uv1_scale = Vector3(-0.47, -0.47, -0.47)
 uv1_triplanar_sharpness = 3.31456

@@ -38,7 +38,6 @@ class QuadtreeChunk :
 		var quarter_size = bounds.size.x * 0.25
 		var half_extents = Vector3(half_size, half_size, half_size)
 		
-		
 		var child_offsets = [
 			Vector2(-quarter_size, -quarter_size),
 			Vector2(quarter_size, -quarter_size),
@@ -102,14 +101,31 @@ func visualize_quadtree(chunk: QuadtreeChunk, face_origin: Vector3, axisA: Vecto
 			verts.append(pos.normalized())
 
 		var indices = PackedInt32Array([0, 2, 1, 0, 3, 2])
+		
+		# Calculate normals (for a sphere, normals are same as normalized vertex positions)
+		var normals = PackedVector3Array()
+		for vertex in verts:
+			normals.append(vertex.normalized())
 
 		var arrays := []
 		arrays.resize(Mesh.ARRAY_MAX)
 		arrays[Mesh.ARRAY_VERTEX] = verts
 		arrays[Mesh.ARRAY_INDEX] = indices
+		arrays[Mesh.ARRAY_NORMAL] = normals
 
 		var mesh = ArrayMesh.new()
 		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+		
+		# Alternative method using SurfaceTool to generate normals
+		var st = SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		for i in range(verts.size()):
+			st.set_normal(normals[i])
+			st.add_vertex(verts[i])
+		for idx in indices:
+			st.add_index(idx)
+		st.generate_normals()
+		mesh = st.commit()
 
 		var mi = MeshInstance3D.new()
 		mi.mesh = mesh

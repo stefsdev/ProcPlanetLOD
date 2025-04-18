@@ -10,11 +10,11 @@ extends Resource
 	get:
 		return radius
 
-@export var resolution := 10.0 : 
-	set(val): 
-		resolution = val
-		emit_changed()
-		
+#@export var resolution := 10.0 : 
+	#set(val): 
+		#resolution = val
+		#emit_changed()
+		#
 @export var planet_noise: Array = [] :
 	set(val):
 		planet_noise = val

@@ -1,5 +1,5 @@
 @tool
-extends Node
+extends Node3D
 
 @export var planet_data: PlanetData:
 	set(val):
@@ -8,14 +8,21 @@ extends Node
 		planet_data = val
 		if planet_data:  # Connect the new resource signal
 			planet_data.changed.connect(_on_resource_changed)
+			
 	get:
 		return planet_data
 
 func _on_resource_changed():
-	planet_data.min_height = 99999.0
-	planet_data.max_height = 0.0
 	for child in get_children():
 		var face = child as PlanetMeshFace
 		if face:
-			face.regenerate_mesh(planet_data)
+			face._regenerate_mesh(planet_data)
 	
+func _ready() -> void:
+	_on_resource_changed()
+
+
+func _on_player_moved(pos: Vector3) -> void:
+	planet_data.lod_focus = pos
+	print("moved")
+	_on_resource_changed()

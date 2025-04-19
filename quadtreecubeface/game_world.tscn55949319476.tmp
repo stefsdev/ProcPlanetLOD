@@ -1,0 +1,52 @@
+[gd_scene load_steps=9 format=3 uid="uid://bri5c30y468bd"]
+
+[ext_resource type="Script" uid="uid://ckb83fvuu55pj" path="res://PlanetMeshFace.gd" id="1_hly68"]
+[ext_resource type="Script" uid="uid://gv7sawbs44bf" path="res://triangle_test.gd" id="2_bvgre"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_hly68"]
+sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+
+[sub_resource type="Sky" id="Sky_bvgre"]
+sky_material = SubResource("ProceduralSkyMaterial_hly68")
+
+[sub_resource type="Environment" id="Environment_ea1x0"]
+background_mode = 2
+sky = SubResource("Sky_bvgre")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_bvgre"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_hly68"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_hly68"]
+
+[node name="GameWorld" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ea1x0")
+
+[node name="PlanetFace" type="MeshInstance3D" parent="."]
+mesh = SubResource("ArrayMesh_bvgre")
+script = ExtResource("1_hly68")
+normal = Vector3(0, 1, 0)
+focus_point = Vector3(-0.25, 1, 0.25)
+
+[node name="PlanetCenter" type="MeshInstance3D" parent="PlanetFace"]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
+mesh = SubResource("SphereMesh_hly68")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 1.62848, 0)
+
+[node name="Player" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, -0.25, 1, 0.25)
+mesh = SubResource("CapsuleMesh_hly68")
+
+[node name="TriangleTest" type="Node3D" parent="."]
+visible = false
+script = ExtResource("2_bvgre")

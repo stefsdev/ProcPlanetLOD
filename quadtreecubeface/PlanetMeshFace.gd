@@ -2,7 +2,7 @@
 extends MeshInstance3D
 class_name PlanetMeshFace
 
-@export var resolution = 25
+
 @export var normal : Vector3
 @export var max_lod : int = 25
 
@@ -13,7 +13,7 @@ var quadtree: QuadtreeChunk
 
 var chunks_list = {}
 var chunks_list_current = {}
-var material = preload("res://quadtree/chunk_vis.tres")
+var material = preload("res://new_standard_material_3d.tres")
 
 
 class QuadtreeChunk :
@@ -62,12 +62,12 @@ class QuadtreeChunk :
 				var new_child = QuadtreeChunk.new(child_bounds, depth + 1, max_chunk_depth)
 				children.append(new_child)
 
+	
 
-func _ready() -> void:
-	if player:
-		focus_point = player.global_transform.origin
-	else:
-		focus_point = Vector3(0,1,0)
+func _regenerate_mesh(planet_data : PlanetData):
+	var radius = planet_data.radius
+	
+	focus_point = planet_data.lod_focus.normalized()
 	var bounds = AABB(Vector3(0, 0, 0), Vector3(2,2,2))
 	quadtree = QuadtreeChunk.new(bounds, 0, max_lod)
 
@@ -76,10 +76,19 @@ func _ready() -> void:
 
 	quadtree.subdivide(focus_point, normal, axisA, axisB)
 	chunks_list_current = {}
-	visualize_quadtree(quadtree, normal, axisA, axisB)
+	visualize_quadtree(quadtree, normal, axisA, axisB, radius)
+	
+		#remove any old unused chunks
+	var chunks_to_remove = []
+	for chunk_id in chunks_list:
+		if not chunks_list_current.has(chunk_id):
+			chunks_to_remove.append(chunk_id)
+	for chunk_id in chunks_to_remove:
+		chunks_list[chunk_id].queue_free()
+		chunks_list.erase(chunk_id)
 
 
-func visualize_quadtree(chunk: QuadtreeChunk, face_origin: Vector3, axisA: Vector3, axisB: Vector3):
+func visualize_quadtree(chunk: QuadtreeChunk, face_origin: Vector3, axisA: Vector3, axisB: Vector3, radius : float):
 	if not chunk.children:
 		chunks_list_current[chunk.identifier] = true
 		if chunks_list.has(chunk.identifier):
@@ -93,12 +102,12 @@ func visualize_quadtree(chunk: QuadtreeChunk, face_origin: Vector3, axisA: Vecto
 			Vector2(offset.x + size, offset.z),
 			Vector2(offset.x + size, offset.z + size),
 			Vector2(offset.x, offset.z + size)
-		]
+		]	
 
 		var verts = PackedVector3Array()
 		for corner in corners:
 			var pos = face_origin + corner.x * axisA + corner.y * axisB
-			verts.append(pos.normalized())
+			verts.append(pos.normalized() * radius)
 
 		var indices = PackedInt32Array([0, 2, 1, 0, 3, 2])
 		
@@ -135,4 +144,4 @@ func visualize_quadtree(chunk: QuadtreeChunk, face_origin: Vector3, axisA: Vecto
 		chunks_list[chunk.identifier] = mi
 
 	for child in chunk.children:
-		visualize_quadtree(child, face_origin, axisA, axisB)
+		visualize_quadtree(child, face_origin, axisA, axisB, radius)

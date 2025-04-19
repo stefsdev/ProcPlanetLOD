@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://drrdw7kjffump"
-path.s3tc="res://.godot/imported/pngtree-diary-organization-a-vector-illustration-of-a-grid-pattern-in-black-png-image_12729900 (2).png-f43a9ee288cba05c02c27bb97ff4dfb3.s3tc.ctex"
+uid="uid://ddtyjr8ck5pys"
+path.s3tc="res://.godot/imported/grid.png-9bb66f80dbdd793fb4bb275a0d999fdf.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://quadtree/pngtree-diary-organization-a-vector-illustration-of-a-grid-pattern-in-black-png-image_12729900 (2).png"
-dest_files=["res://.godot/imported/pngtree-diary-organization-a-vector-illustration-of-a-grid-pattern-in-black-png-image_12729900 (2).png-f43a9ee288cba05c02c27bb97ff4dfb3.s3tc.ctex"]
+source_file="res://grid.png"
+dest_files=["res://.godot/imported/grid.png-9bb66f80dbdd793fb4bb275a0d999fdf.s3tc.ctex"]
 
 [params]
 

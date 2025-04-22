@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://bww6tw8vjp8o6"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_mf4mk"]
+radial_segments = 30
+rings = 17
+
+[node name="Test" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_mf4mk")

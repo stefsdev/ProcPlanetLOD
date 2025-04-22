@@ -30,7 +30,7 @@ class QuadtreeChunk :
 		# Generate a unique identifier for the chunk based on bounds and depth
 		return "%s_%s_%d" % [bounds.position, bounds.size, depth]
 			
-	func subdivide(focus_point: Vector3, face_origin: Vector3, axisA: Vector3, axisB: Vector3):
+	func subdivide(focus_point: Vector3, face_origin: Vector3, axisA: Vector3, axisB: Vector3, planet_data : PlanetData):
 		var half_size = bounds.size.x * 0.5
 		var quarter_size = bounds.size.x * 0.25
 		var half_extents = Vector3(half_size, half_size, half_size)
@@ -46,15 +46,16 @@ class QuadtreeChunk :
 			var child_pos_2d = Vector2(bounds.position.x, bounds.position.z) + offset
 			var center_local_3d = face_origin + child_pos_2d.x * axisA + child_pos_2d.y * axisB
 			
-			var distance = center_local_3d.distance_to(focus_point)
-			
+			var distance = center_local_3d.normalized().distance_to(focus_point)
+			#var distance = planet_data.point_on_planet(center_local_3d.normalized()).distance_to(focus_point)
+		
 			
 			if depth < max_chunk_depth and distance < bounds.size.x * 0.65:
 				var child_bounds = AABB(Vector3(child_pos_2d.x, 0, child_pos_2d.y), half_extents)
 				var new_child = QuadtreeChunk.new(child_bounds, depth + 1, max_chunk_depth)
 				children.append(new_child)
 				
-				new_child.subdivide(focus_point, face_origin, axisA, axisB)
+				new_child.subdivide(focus_point, face_origin, axisA, axisB,planet_data)
 			else:
 				var child_bounds = AABB(Vector3(child_pos_2d.x, 0, child_pos_2d.y) - Vector3(quarter_size, quarter_size, quarter_size), half_extents)
 				var new_child = QuadtreeChunk.new(child_bounds, depth + 1, max_chunk_depth)
@@ -72,7 +73,7 @@ func _regenerate_mesh(planet_data : PlanetData):
 	var axisA = Vector3(normal.y, normal.z, normal.x).normalized()
 	var axisB = normal.cross(axisA).normalized()
 
-	quadtree.subdivide(focus_point, normal, axisA, axisB)
+	quadtree.subdivide(focus_point, normal, axisA, axisB, planet_data)
 	chunks_list_current = {}
 	visualize_quadtree(quadtree, normal, axisA, axisB, radius, planet_data)
 	

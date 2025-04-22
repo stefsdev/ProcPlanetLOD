@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://bri5c30y468bd"]
+[gd_scene load_steps=24 format=3 uid="uid://bri5c30y468bd"]
 
 [ext_resource type="Script" uid="uid://dfh1egod86hf4" path="res://Planet.gd" id="1_bvgre"]
 [ext_resource type="Script" uid="uid://ckb83fvuu55pj" path="res://PlanetMeshFace.gd" id="1_hly68"]
@@ -7,16 +7,16 @@
 [ext_resource type="Script" uid="uid://rwecv6uhnhcs" path="res://player.gd" id="4_e08lw"]
 [ext_resource type="Material" uid="uid://24khlq3s70fp" path="res://planet.tres" id="5_mcbma"]
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_hly68"]
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_mcbma"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
 ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
 
-[sub_resource type="Sky" id="Sky_bvgre"]
-sky_material = SubResource("ProceduralSkyMaterial_hly68")
+[sub_resource type="Sky" id="Sky_ik71a"]
+sky_material = SubResource("ProceduralSkyMaterial_mcbma")
 
-[sub_resource type="Environment" id="Environment_ea1x0"]
+[sub_resource type="Environment" id="Environment_e7o6u"]
 background_mode = 2
-sky = SubResource("Sky_bvgre")
+sky = SubResource("Sky_ik71a")
 tonemap_mode = 2
 glow_enabled = true
 
@@ -80,21 +80,28 @@ metadata/_custom_type_script = "uid://jlu5a1150vmp"
 [sub_resource type="Resource" id="Resource_e08lw"]
 script = ExtResource("2_ea1x0")
 radius = 67
-lod_focus = Vector3(28.7211, 10.4555, 79.3144)
-max_lod = 5
-resolution = 2
+lod_focus = Vector3(0, 71.0051, 3.008)
+max_lod = 6
+resolution = 3
 planet_noise = [SubResource("Resource_e3xe6"), SubResource("Resource_ik71a"), SubResource("Resource_15365"), SubResource("Resource_554lw")]
 planet_color = SubResource("GradientTexture1D_mcbma")
 metadata/_custom_type_script = "uid://rbpxmchirygj"
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_e3xe6"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mcbma"]
+albedo_color = Color(0.733173, 0.14124, 0.289682, 1)
+
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_hly68"]
+material = SubResource("StandardMaterial3D_mcbma")
 
 [node name="GameWorld" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_ea1x0")
+environment = SubResource("Environment_e7o6u")
+
+[node name="Marker3D" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 2, 0)
 
 [node name="Planet" type="Node3D" parent="."]
 script = ExtResource("1_bvgre")
@@ -138,22 +145,20 @@ script = ExtResource("1_hly68")
 normal = Vector3(0, 0, 1)
 player = NodePath("../../Player/PlayerVis")
 
-[node name="Marker3D" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 2, 0)
-
 [node name="Player" type="Node3D" parent="."]
-transform = Transform3D(0.941181, -0.00226319, 0.337896, -0.0417783, 0.991527, 0.123006, -0.335312, -0.129889, 0.933111, 0, 0, 0)
+transform = Transform3D(0.999999, 0, 0, 0, -4.37114e-08, 0.999999, 0, -1, -4.37113e-08, 0, 0, 0)
 script = ExtResource("4_e08lw")
 
 [node name="PlayerVis" type="MeshInstance3D" parent="Player"]
-transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 85)
+transform = Transform3D(0.5, 0, 0, 0, -2.18557e-08, 0.5, 0, -0.5, -2.18557e-08, 0, -3.008, 71.0052)
 mesh = SubResource("CapsuleMesh_hly68")
 skeleton = NodePath("../..")
 
 [node name="Camera3D" type="Camera3D" parent="Player/PlayerVis"]
-transform = Transform3D(9.09236, -1.32088, 3.94769, 0, 9.48324, 3.17305, -4.16281, -2.88505, 8.6225, 4.63092, 5.80729, 14.3047)
+transform = Transform3D(8.33885, -1.05315, 5.41796, 0, 9.81627, 1.90809, -5.51936, -1.59113, 8.18564, 0.822845, 0.397, 8.2973)
+fov = 94.1
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Player/PlayerVis"]
-transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 0.202565, -0.979269, 0, 0.97927, 0.202566, 0, 0, 31.1733)
 
 [connection signal="moved" from="Player" to="Planet" method="_on_player_moved"]

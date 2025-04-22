@@ -66,4 +66,5 @@ func point_on_planet(point_on_sphere : Vector3) -> Vector3:
 		level_elevation = level_elevation + 1 / 2.0 * n.amplitude
 		level_elevation = max(0.0, level_elevation - n.min_height) * base_layer_mask
 		elevation += level_elevation
-	return point_on_sphere * radius * (elevation + 1.0) 
+	#return point_on_sphere * radius * (elevation + 1.0) 
+	return point_on_sphere * radius

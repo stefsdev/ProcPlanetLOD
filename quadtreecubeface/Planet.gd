@@ -24,5 +24,4 @@ func _ready() -> void:
 
 func _on_player_moved(pos: Vector3) -> void:
 	planet_data.lod_focus = pos
-	print("moved")
 	_on_resource_changed()

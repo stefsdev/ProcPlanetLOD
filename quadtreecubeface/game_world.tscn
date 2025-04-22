@@ -1,9 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://bri5c30y468bd"]
+[gd_scene load_steps=23 format=3 uid="uid://bri5c30y468bd"]
 
 [ext_resource type="Script" uid="uid://dfh1egod86hf4" path="res://Planet.gd" id="1_bvgre"]
 [ext_resource type="Script" uid="uid://ckb83fvuu55pj" path="res://PlanetMeshFace.gd" id="1_hly68"]
+[ext_resource type="Script" uid="uid://jlu5a1150vmp" path="res://PlanetNoise.gd" id="2_e3xe6"]
 [ext_resource type="Script" uid="uid://rbpxmchirygj" path="res://PlanetData.gd" id="2_ea1x0"]
 [ext_resource type="Script" uid="uid://rwecv6uhnhcs" path="res://player.gd" id="4_e08lw"]
+[ext_resource type="Material" uid="uid://24khlq3s70fp" path="res://planet.tres" id="5_mcbma"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_hly68"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -18,11 +20,74 @@ sky = SubResource("Sky_bvgre")
 tonemap_mode = 2
 glow_enabled = true
 
+[sub_resource type="Gradient" id="Gradient_e3xe6"]
+offsets = PackedFloat32Array(0, 0.496875, 1)
+colors = PackedColorArray(0.835842, 0, 0.39292, 1, 1.92523e-06, 0.874501, 0.537473, 1, 0, 0.527055, 0.928783, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_mcbma"]
+gradient = SubResource("Gradient_e3xe6")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_e3xe6"]
+noise_type = 3
+frequency = 0.0066
+offset = Vector3(526.32, 0, 0)
+
+[sub_resource type="Resource" id="Resource_e3xe6"]
+script = ExtResource("2_e3xe6")
+amplitude = 1.0
+min_height = 0.73
+noise_map = SubResource("FastNoiseLite_e3xe6")
+is_base_layer = true
+metadata/_custom_type_script = "uid://jlu5a1150vmp"
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_mcbma"]
+noise_type = 3
+frequency = 0.0026
+offset = Vector3(-384.23, 0, 0)
+
+[sub_resource type="Resource" id="Resource_ik71a"]
+script = ExtResource("2_e3xe6")
+amplitude = 1.0
+min_height = 0.44
+noise_map = SubResource("FastNoiseLite_mcbma")
+is_base_layer = true
+metadata/_custom_type_script = "uid://jlu5a1150vmp"
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_e7o6u"]
+noise_type = 3
+frequency = 0.025
+
+[sub_resource type="Resource" id="Resource_15365"]
+script = ExtResource("2_e3xe6")
+amplitude = 1.0
+min_height = 0.54
+noise_map = SubResource("FastNoiseLite_e7o6u")
+is_base_layer = false
+metadata/_custom_type_script = "uid://jlu5a1150vmp"
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ik71a"]
+noise_type = 2
+frequency = 0.0715
+
+[sub_resource type="Resource" id="Resource_554lw"]
+script = ExtResource("2_e3xe6")
+amplitude = 1.0
+min_height = 0.0
+noise_map = SubResource("FastNoiseLite_ik71a")
+is_base_layer = false
+metadata/_custom_type_script = "uid://jlu5a1150vmp"
+
 [sub_resource type="Resource" id="Resource_e08lw"]
 script = ExtResource("2_ea1x0")
-radius = 8
-lod_focus = Vector3(-7.80982, 6.03142, -1.6213)
+radius = 67
+lod_focus = Vector3(28.7211, 10.4555, 79.3144)
+max_lod = 5
+resolution = 2
+planet_noise = [SubResource("Resource_e3xe6"), SubResource("Resource_ik71a"), SubResource("Resource_15365"), SubResource("Resource_554lw")]
+planet_color = SubResource("GradientTexture1D_mcbma")
 metadata/_custom_type_script = "uid://rbpxmchirygj"
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_e3xe6"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_hly68"]
 
@@ -36,6 +101,7 @@ script = ExtResource("1_bvgre")
 planet_data = SubResource("Resource_e08lw")
 
 [node name="Top" type="MeshInstance3D" parent="Planet" node_paths=PackedStringArray("player")]
+mesh = SubResource("ArrayMesh_e3xe6")
 skeleton = NodePath("../../root/@EditorNode@21272/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@54/@VBoxContainer@55/@EditorMainScreen@102/MainScreen/@CanvasItemEditor@11482/@VSplitContainer@11134/@HSplitContainer@11136/@HSplitContainer@11138/@Control@11139/@SubViewportContainer@11140/@SubViewport@11141/GameWorld")
 script = ExtResource("1_hly68")
 normal = Vector3(0, 1, 0)
@@ -48,6 +114,7 @@ normal = Vector3(0, -1, 0)
 player = NodePath("../../Player/PlayerVis")
 
 [node name="Left" type="MeshInstance3D" parent="Planet" node_paths=PackedStringArray("player")]
+material_override = ExtResource("5_mcbma")
 skeleton = NodePath("../../root/@EditorNode@21272/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@54/@VBoxContainer@55/@EditorMainScreen@102/MainScreen/@CanvasItemEditor@11482/@VSplitContainer@11134/@HSplitContainer@11136/@HSplitContainer@11138/@Control@11139/@SubViewportContainer@11140/@SubViewport@11141/GameWorld")
 script = ExtResource("1_hly68")
 normal = Vector3(1, 0, 0)
@@ -72,13 +139,14 @@ normal = Vector3(0, 0, 1)
 player = NodePath("../../Player/PlayerVis")
 
 [node name="Marker3D" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 2, 0)
 
 [node name="Player" type="Node3D" parent="."]
-transform = Transform3D(0.60223, 0.165486, -0.780982, 0.796035, -0.0504742, 0.603142, 0.0603921, -0.98492, -0.16213, 0, 0, 0)
+transform = Transform3D(0.941181, -0.00226319, 0.337896, -0.0417783, 0.991527, 0.123006, -0.335312, -0.129889, 0.933111, 0, 0, 0)
 script = ExtResource("4_e08lw")
 
 [node name="PlayerVis" type="MeshInstance3D" parent="Player"]
-transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 10)
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 85)
 mesh = SubResource("CapsuleMesh_hly68")
 skeleton = NodePath("../..")
 

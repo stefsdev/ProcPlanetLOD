@@ -13,6 +13,8 @@ var quadtree: QuadtreeChunk
 var chunks_list = {}
 var chunks_list_current = {}
 
+
+
 class QuadtreeChunk :
 	var bounds : AABB
 	var children = []
@@ -46,11 +48,9 @@ class QuadtreeChunk :
 			var child_pos_2d = Vector2(bounds.position.x, bounds.position.z) + offset
 			var center_local_3d = face_origin + child_pos_2d.x * axisA + child_pos_2d.y * axisB
 			
-			var distance = center_local_3d.normalized().distance_to(focus_point)
-			#var distance = planet_data.point_on_planet(center_local_3d.normalized()).distance_to(focus_point)
-		
+			var distance = planet_data.point_on_planet(center_local_3d.normalized()).distance_to(focus_point)
 			
-			if depth < max_chunk_depth and distance < bounds.size.x * 0.65:
+			if depth < max_chunk_depth and distance <= planet_data.lod_levels[depth]["distance"]:
 				var child_bounds = AABB(Vector3(child_pos_2d.x, 0, child_pos_2d.y), half_extents)
 				var new_child = QuadtreeChunk.new(child_bounds, depth + 1, max_chunk_depth)
 				children.append(new_child)
@@ -66,7 +66,13 @@ class QuadtreeChunk :
 func _regenerate_mesh(planet_data : PlanetData):
 	var radius = planet_data.radius
 	
-	focus_point = planet_data.lod_focus.normalized()
+	focus_point = planet_data.lod_focus
+	
+	var playerpos =planet_data.lod_focus
+	
+	#var player_dist_surf = planet_data.point_on_planet(playerpos.normalized()).distance_to(playerpos)
+	#print_debug(player_dist_surf)
+	
 	var bounds = AABB(Vector3(0, 0, 0), Vector3(2,2,2))
 	quadtree = QuadtreeChunk.new(bounds, 0, planet_data.max_lod)
 
@@ -107,7 +113,7 @@ func visualize_quadtree(chunk: QuadtreeChunk, face_origin: Vector3, axisA: Vecto
 		var indices = PackedInt32Array()
 		var normals = PackedVector3Array()
 
-		var resolution = planet_data.resolution * chunk.depth
+		var resolution = planet_data.lod_levels[chunk.depth - 1]["resolution"]
 		
 		for y in range(resolution):
 			for x in range(resolution):

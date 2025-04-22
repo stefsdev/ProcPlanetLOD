@@ -80,8 +80,23 @@ metadata/_custom_type_script = "uid://jlu5a1150vmp"
 [sub_resource type="Resource" id="Resource_e08lw"]
 script = ExtResource("2_ea1x0")
 radius = 67
-lod_focus = Vector3(0, 71.0051, 3.008)
-max_lod = 6
+lod_focus = Vector3(7.86182, 0, 104.517)
+lod_levels = [{
+"distance": 500,
+"resolution": 2
+}, {
+"distance": 50,
+"resolution": 2
+}, {
+"distance": 25,
+"resolution": 3
+}, {
+"distance": 15,
+"resolution": 4
+}, {
+"distance": 5,
+"resolution": 5
+}]
 resolution = 3
 planet_noise = [SubResource("Resource_e3xe6"), SubResource("Resource_ik71a"), SubResource("Resource_15365"), SubResource("Resource_554lw")]
 planet_color = SubResource("GradientTexture1D_mcbma")
@@ -146,19 +161,18 @@ normal = Vector3(0, 0, 1)
 player = NodePath("../../Player/PlayerVis")
 
 [node name="Player" type="Node3D" parent="."]
-transform = Transform3D(0.999999, 0, 0, 0, -4.37114e-08, 0.999999, 0, -1, -4.37113e-08, 0, 0, 0)
+transform = Transform3D(0.993879, 0, -0.110463, 0, 1, 0, 0.110463, 0, 0.993879, 0, 0, 0)
 script = ExtResource("4_e08lw")
 
 [node name="PlayerVis" type="MeshInstance3D" parent="Player"]
-transform = Transform3D(0.5, 0, 0, 0, -2.18557e-08, 0.5, 0, -0.5, -2.18557e-08, 0, -3.008, 71.0052)
+transform = Transform3D(0.5, 1.49012e-08, 1.77636e-15, 0, -2.18557e-08, 0.5, 1.49012e-08, -0.5, -2.18557e-08, 19.359, 0, 103.009)
 mesh = SubResource("CapsuleMesh_hly68")
 skeleton = NodePath("../..")
 
 [node name="Camera3D" type="Camera3D" parent="Player/PlayerVis"]
-transform = Transform3D(8.33885, -1.05315, 5.41796, 0, 9.81627, 1.90809, -5.51936, -1.59113, 8.18564, 0.822845, 0.397, 8.2973)
+transform = Transform3D(9.99999, 0, 0, 0, 1.04528, -9.94521, 0, 9.94522, 1.04528, 0.823, -11.148, 8.297)
 fov = 94.1
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Player"]
-transform = Transform3D(1, 0, 0, 0, 0.202565, -0.979269, 0, 0.97927, 0.202566, 0, 0, 31.1733)
 
 [connection signal="moved" from="Player" to="Planet" method="_on_player_moved"]

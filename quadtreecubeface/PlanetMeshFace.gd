@@ -14,13 +14,13 @@ var chunks_list = {}
 var chunks_list_current = {}
 
 
-
 class QuadtreeChunk :
 	var bounds : AABB
 	var children = []
 	var depth : int 
 	var max_chunk_depth : int
 	var identifier: String
+	
 	
 	func _init(_bounds: AABB, _depth: int, _max_chunk_depth: int):
 		bounds = _bounds
@@ -119,10 +119,13 @@ func visualize_quadtree(chunk: QuadtreeChunk, face_origin: Vector3, axisA: Vecto
 			for x in range(resolution):
 				var percent = Vector2(x, y) / float(resolution - 1)
 				var local_offset = Vector2(offset.x, offset.z) + percent * size
+				
+				
 				var point_on_plane = face_origin + local_offset.x * axisA + local_offset.y * axisB
 				var point_on_sphere = planet_data.point_on_planet(point_on_plane.normalized()) 
 				verts.append(point_on_sphere)
 				normals.append(point_on_sphere.normalized())
+				
 
 		for y in range(resolution - 1):
 			for x in range(resolution - 1):

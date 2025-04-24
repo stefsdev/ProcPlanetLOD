@@ -80,7 +80,7 @@ metadata/_custom_type_script = "uid://jlu5a1150vmp"
 [sub_resource type="Resource" id="Resource_e08lw"]
 script = ExtResource("2_ea1x0")
 radius = 67
-lod_focus = Vector3(7.86182, 0, 104.517)
+lod_focus = Vector3(14.1575, 69.9934, 3.81934)
 lod_levels = [{
 "distance": 500,
 "resolution": 2
@@ -91,11 +91,11 @@ lod_levels = [{
 "distance": 25,
 "resolution": 3
 }, {
-"distance": 15,
+"distance": 10,
 "resolution": 4
 }, {
-"distance": 5,
-"resolution": 5
+"distance": 1,
+"resolution": 10
 }]
 resolution = 3
 planet_noise = [SubResource("Resource_e3xe6"), SubResource("Resource_ik71a"), SubResource("Resource_15365"), SubResource("Resource_554lw")]
@@ -161,11 +161,11 @@ normal = Vector3(0, 0, 1)
 player = NodePath("../../Player/PlayerVis")
 
 [node name="Player" type="Node3D" parent="."]
-transform = Transform3D(0.993879, 0, -0.110463, 0, 1, 0, 0.110463, 0, 0.993879, 0, 0, 0)
+transform = Transform3D(0.999877, -0.0018155, -0.0154966, 0.0156026, 0.116345, 0.993085, 0, -0.993207, 0.116359, 0, 0, 0)
 script = ExtResource("4_e08lw")
 
 [node name="PlayerVis" type="MeshInstance3D" parent="Player"]
-transform = Transform3D(0.5, 1.49012e-08, 1.77636e-15, 0, -2.18557e-08, 0.5, 1.49012e-08, -0.5, -2.18557e-08, 19.359, 0, 103.009)
+transform = Transform3D(0.499999, 2.23517e-08, 3.9968e-15, -4.44089e-16, -2.98023e-08, 0.500001, 2.23517e-08, -0.499999, -3.35276e-08, 15.2479, 4.32428, 69.7346)
 mesh = SubResource("CapsuleMesh_hly68")
 skeleton = NodePath("../..")
 

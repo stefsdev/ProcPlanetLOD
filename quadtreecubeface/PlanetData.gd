@@ -29,8 +29,8 @@ var max_lod : int :
 	{ "distance": 500, "resolution": 2 },
 	{ "distance": 50, "resolution": 2 },
 	{ "distance": 25, "resolution": 3 },
-	{ "distance": 15, "resolution": 4 },
-	{ "distance": 5, "resolution": 5 },
+	{ "distance": 10, "resolution": 4 },
+	{ "distance": 1, "resolution": 10 },
 ] :
 	get:
 		return lod_levels

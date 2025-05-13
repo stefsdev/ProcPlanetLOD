@@ -1,11 +1,9 @@
-[gd_scene load_steps=24 format=3 uid="uid://bri5c30y468bd"]
+[gd_scene load_steps=21 format=3 uid="uid://bri5c30y468bd"]
 
 [ext_resource type="Script" uid="uid://dfh1egod86hf4" path="res://Planet.gd" id="1_bvgre"]
-[ext_resource type="Script" uid="uid://ckb83fvuu55pj" path="res://PlanetMeshFace.gd" id="1_hly68"]
 [ext_resource type="Script" uid="uid://jlu5a1150vmp" path="res://PlanetNoise.gd" id="2_e3xe6"]
 [ext_resource type="Script" uid="uid://rbpxmchirygj" path="res://PlanetData.gd" id="2_ea1x0"]
 [ext_resource type="Script" uid="uid://rwecv6uhnhcs" path="res://player.gd" id="4_e08lw"]
-[ext_resource type="Material" uid="uid://24khlq3s70fp" path="res://planet.tres" id="5_mcbma"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_mcbma"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -80,7 +78,7 @@ metadata/_custom_type_script = "uid://jlu5a1150vmp"
 [sub_resource type="Resource" id="Resource_e08lw"]
 script = ExtResource("2_ea1x0")
 radius = 67
-lod_focus = Vector3(14.1575, 69.9934, 3.81934)
+lod_focus = Vector3(13.5514, 70.0984, 4.08398)
 lod_levels = [{
 "distance": 500,
 "resolution": 2
@@ -102,8 +100,6 @@ planet_noise = [SubResource("Resource_e3xe6"), SubResource("Resource_ik71a"), Su
 planet_color = SubResource("GradientTexture1D_mcbma")
 metadata/_custom_type_script = "uid://rbpxmchirygj"
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_e3xe6"]
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mcbma"]
 albedo_color = Color(0.733173, 0.14124, 0.289682, 1)
 
@@ -122,46 +118,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 2, 0)
 script = ExtResource("1_bvgre")
 planet_data = SubResource("Resource_e08lw")
 
-[node name="Top" type="MeshInstance3D" parent="Planet" node_paths=PackedStringArray("player")]
-mesh = SubResource("ArrayMesh_e3xe6")
-skeleton = NodePath("../../root/@EditorNode@21272/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@54/@VBoxContainer@55/@EditorMainScreen@102/MainScreen/@CanvasItemEditor@11482/@VSplitContainer@11134/@HSplitContainer@11136/@HSplitContainer@11138/@Control@11139/@SubViewportContainer@11140/@SubViewport@11141/GameWorld")
-script = ExtResource("1_hly68")
-normal = Vector3(0, 1, 0)
-player = NodePath("../../Player/PlayerVis")
-
-[node name="Bot" type="MeshInstance3D" parent="Planet" node_paths=PackedStringArray("player")]
-skeleton = NodePath("../../root/@EditorNode@21272/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@54/@VBoxContainer@55/@EditorMainScreen@102/MainScreen/@CanvasItemEditor@11482/@VSplitContainer@11134/@HSplitContainer@11136/@HSplitContainer@11138/@Control@11139/@SubViewportContainer@11140/@SubViewport@11141/GameWorld")
-script = ExtResource("1_hly68")
-normal = Vector3(0, -1, 0)
-player = NodePath("../../Player/PlayerVis")
-
-[node name="Left" type="MeshInstance3D" parent="Planet" node_paths=PackedStringArray("player")]
-material_override = ExtResource("5_mcbma")
-skeleton = NodePath("../../root/@EditorNode@21272/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@54/@VBoxContainer@55/@EditorMainScreen@102/MainScreen/@CanvasItemEditor@11482/@VSplitContainer@11134/@HSplitContainer@11136/@HSplitContainer@11138/@Control@11139/@SubViewportContainer@11140/@SubViewport@11141/GameWorld")
-script = ExtResource("1_hly68")
-normal = Vector3(1, 0, 0)
-player = NodePath("../../Player/PlayerVis")
-
-[node name="Right" type="MeshInstance3D" parent="Planet" node_paths=PackedStringArray("player")]
-skeleton = NodePath("../../root/@EditorNode@21272/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@54/@VBoxContainer@55/@EditorMainScreen@102/MainScreen/@CanvasItemEditor@11482/@VSplitContainer@11134/@HSplitContainer@11136/@HSplitContainer@11138/@Control@11139/@SubViewportContainer@11140/@SubViewport@11141/GameWorld")
-script = ExtResource("1_hly68")
-normal = Vector3(-1, 0, 0)
-player = NodePath("../../Player/PlayerVis")
-
-[node name="Back" type="MeshInstance3D" parent="Planet" node_paths=PackedStringArray("player")]
-skeleton = NodePath("../../root/@EditorNode@21272/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@54/@VBoxContainer@55/@EditorMainScreen@102/MainScreen/@CanvasItemEditor@11482/@VSplitContainer@11134/@HSplitContainer@11136/@HSplitContainer@11138/@Control@11139/@SubViewportContainer@11140/@SubViewport@11141/GameWorld")
-script = ExtResource("1_hly68")
-normal = Vector3(0, 0, -1)
-player = NodePath("../../Player/PlayerVis")
-
-[node name="Front" type="MeshInstance3D" parent="Planet" node_paths=PackedStringArray("player")]
-skeleton = NodePath("../../root/@EditorNode@21272/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@54/@VBoxContainer@55/@EditorMainScreen@102/MainScreen/@CanvasItemEditor@11482/@VSplitContainer@11134/@HSplitContainer@11136/@HSplitContainer@11138/@Control@11139/@SubViewportContainer@11140/@SubViewport@11141/GameWorld")
-script = ExtResource("1_hly68")
-normal = Vector3(0, 0, 1)
-player = NodePath("../../Player/PlayerVis")
-
 [node name="Player" type="Node3D" parent="."]
-transform = Transform3D(0.999877, -0.0018155, -0.0154966, 0.0156026, 0.116345, 0.993085, 0, -0.993207, 0.116359, 0, 0, 0)
+transform = Transform3D(0.999705, -0.0019019, -0.024145, 0.0241989, 0.119897, 0.99249, 0.00100729, -0.992784, 0.119907, 0, 0, 0)
 script = ExtResource("4_e08lw")
 
 [node name="PlayerVis" type="MeshInstance3D" parent="Player"]

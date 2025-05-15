@@ -18,12 +18,12 @@ sky = SubResource("Sky_ik71a")
 tonemap_mode = 2
 glow_enabled = true
 
-[sub_resource type="Gradient" id="Gradient_e3xe6"]
-offsets = PackedFloat32Array(0, 0.496875, 1)
-colors = PackedColorArray(0.835842, 0, 0.39292, 1, 1.92523e-06, 0.874501, 0.537473, 1, 0, 0.527055, 0.928783, 1)
+[sub_resource type="Gradient" id="Gradient_e08lw"]
+offsets = PackedFloat32Array(0.343598, 0.350081, 0.387358, 0.400324, 0.579327, 0.627404, 0.677885, 0.745192)
+colors = PackedColorArray(0.188078, 0.510593, 1, 1, 0.94, 0.827983, 0.423, 1, 0.888453, 0.831912, 0.388569, 1, 0.741176, 0.843137, 0.290196, 1, 0.282353, 0.407843, 0.121569, 1, 0.627451, 0.521569, 0.396078, 1, 0.52549, 0.52549, 0.419608, 1, 1, 1, 1, 1)
 
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_mcbma"]
-gradient = SubResource("Gradient_e3xe6")
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_e3xe6"]
+gradient = SubResource("Gradient_e08lw")
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_e3xe6"]
 noise_type = 3
@@ -78,7 +78,7 @@ metadata/_custom_type_script = "uid://jlu5a1150vmp"
 [sub_resource type="Resource" id="Resource_e08lw"]
 script = ExtResource("2_ea1x0")
 radius = 67
-lod_focus = Vector3(13.5514, 70.0984, 4.08398)
+lod_focus = Vector3(-3.20899, 69.664, -4.324)
 lod_levels = [{
 "distance": 500,
 "resolution": 2
@@ -93,11 +93,10 @@ lod_levels = [{
 "resolution": 4
 }, {
 "distance": 1,
-"resolution": 10
+"resolution": 20
 }]
-resolution = 3
 planet_noise = [SubResource("Resource_e3xe6"), SubResource("Resource_ik71a"), SubResource("Resource_15365"), SubResource("Resource_554lw")]
-planet_color = SubResource("GradientTexture1D_mcbma")
+planet_color = SubResource("GradientTexture1D_e3xe6")
 metadata/_custom_type_script = "uid://rbpxmchirygj"
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mcbma"]
@@ -119,11 +118,11 @@ script = ExtResource("1_bvgre")
 planet_data = SubResource("Resource_e08lw")
 
 [node name="Player" type="Node3D" parent="."]
-transform = Transform3D(0.999705, -0.0019019, -0.024145, 0.0241989, 0.119897, 0.99249, 0.00100729, -0.992784, 0.119907, 0, 0, 0)
+transform = Transform3D(0.999998, 0, 0, 0, -4.37114e-08, 0.999999, 0, -1, -4.37113e-08, 0, 0, 0)
 script = ExtResource("4_e08lw")
 
 [node name="PlayerVis" type="MeshInstance3D" parent="Player"]
-transform = Transform3D(0.499999, 2.23517e-08, 3.9968e-15, -4.44089e-16, -2.98023e-08, 0.500001, 2.23517e-08, -0.499999, -3.35276e-08, 15.2479, 4.32428, 69.7346)
+transform = Transform3D(0.499999, 2.23517e-08, 3.9968e-15, -4.44089e-16, -2.98023e-08, 0.500001, 2.23517e-08, -0.499999, -3.35276e-08, -3.209, 4.324, 69.6641)
 mesh = SubResource("CapsuleMesh_hly68")
 skeleton = NodePath("../..")
 
@@ -132,5 +131,6 @@ transform = Transform3D(9.99999, 0, 0, 0, 1.04528, -9.94521, 0, 9.94522, 1.04528
 fov = 94.1
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Player"]
+transform = Transform3D(0.980164, 0.162288, -0.113758, 0.192196, -0.63829, 0.745418, 0.048362, -0.752495, -0.65682, 0, 0, 0)
 
 [connection signal="moved" from="Player" to="Planet" method="_on_player_moved"]

@@ -40,12 +40,6 @@ var max_lod : int :
 		emit_changed()
 		
 
-@export var resolution = 2: 
-	set(val): 
-		resolution = val
-		emit_changed()
-	get:
-		return resolution
 
 @export var planet_noise: Array = [] :
 	set(val):

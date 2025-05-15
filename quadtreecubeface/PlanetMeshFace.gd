@@ -8,6 +8,8 @@ class_name PlanetMeshFace
 @export var player : Node3D
 var focus_point : Vector3 = Vector3.ZERO
 
+var shader = preload("res://planet.tres")
+
 var quadtree: QuadtreeChunk
 
 var chunks_list = {}
@@ -93,7 +95,7 @@ func _regenerate_mesh(planet_data : PlanetData):
 		chunks_list.erase(chunk_id)
 
 
-func visualize_quadtree(chunk: QuadtreeChunk, face_origin: Vector3, axisA: Vector3, axisB: Vector3, radius : float, planet_data : PlanetData):
+func visualize_quadtree(chunk: QuadtreeChunk, face_origin: Vector3, axisA: Vector3, axisB: Vector3, radius: float, planet_data: PlanetData) -> void:
 	if not chunk.children:
 		chunks_list_current[chunk.identifier] = true
 		if chunks_list.has(chunk.identifier):
@@ -102,66 +104,87 @@ func visualize_quadtree(chunk: QuadtreeChunk, face_origin: Vector3, axisA: Vecto
 		var size = chunk.bounds.size.x
 		var offset = chunk.bounds.position
 
-		var corners = [
-			Vector2(offset.x, offset.z),
-			Vector2(offset.x + size, offset.z),
-			Vector2(offset.x + size, offset.z + size),
-			Vector2(offset.x, offset.z + size)
-		]	
+		# Define grid resolution based on LOD
+		var resolution: int = planet_data.lod_levels[chunk.depth - 1]["resolution"]
+		var vertex_array := PackedVector3Array()
+		var normal_array := PackedVector3Array()
+		var index_array := PackedInt32Array()
 
-		var verts = PackedVector3Array()
-		var indices = PackedInt32Array()
-		var normals = PackedVector3Array()
+		# Pre-allocate indices (we know exact count)
+		var num_cells = (resolution - 1)
+		index_array.resize(num_cells * num_cells * 6)
 
-		var resolution = planet_data.lod_levels[chunk.depth - 1]["resolution"]
-		
+		# Build vertices & normals (initialized zero)
+		vertex_array.resize(resolution * resolution)
+		normal_array.resize(resolution * resolution)
+
+		var tri_idx: int = 0
 		for y in range(resolution):
 			for x in range(resolution):
-				var percent = Vector2(x, y) / float(resolution - 1)
-				var local_offset = Vector2(offset.x, offset.z) + percent * size
-				
-				
-				var point_on_plane = face_origin + local_offset.x * axisA + local_offset.y * axisB
-				var point_on_sphere = planet_data.point_on_planet(point_on_plane.normalized()) 
-				verts.append(point_on_sphere)
-				normals.append(point_on_sphere.normalized())
-				
-
-		for y in range(resolution - 1):
-			for x in range(resolution - 1):
 				var i = x + y * resolution
-				indices.append_array([
-					i, i + resolution + 1, i + 1,
-					i, i + resolution, i + resolution + 1
-				])
+				var percent = Vector2(x, y) / float(resolution - 1)
+				var local = Vector2(offset.x, offset.z) + percent * size
+				var point_on_plane = face_origin + local.x * axisA + local.y * axisB
+				# Project onto sphere and apply height
+				var sphere_pos = planet_data.point_on_planet(point_on_plane.normalized())
+				vertex_array[i] = sphere_pos
+				normal_array[i] = Vector3.ZERO
 
-		var arrays := []
+				# Track height extremes
+				var length = sphere_pos.length()
+				planet_data.min_height = min(planet_data.min_height, length)
+				planet_data.max_height = max(planet_data.max_height, length)
+
+				# Create two triangles per cell
+				if x < resolution - 1 and y < resolution - 1:
+					# Triangle 1
+					index_array[tri_idx]     = i
+					index_array[tri_idx + 1] = i + resolution
+					index_array[tri_idx + 2] = i + resolution + 1
+					# Triangle 2
+					index_array[tri_idx + 3] = i
+					index_array[tri_idx + 4] = i + resolution + 1
+					index_array[tri_idx + 5] = i + 1
+					tri_idx += 6
+
+		# Calculate smooth normals
+		for t in range(0, index_array.size(), 3):
+			var a = index_array[t]
+			var b = index_array[t + 1]
+			var c = index_array[t + 2]
+			var v0 = vertex_array[a]
+			var v1 = vertex_array[b]
+			var v2 = vertex_array[c]
+			var face_normal = (v1 - v0).cross(v2 - v0).normalized()
+			normal_array[a] += face_normal
+			normal_array[b] += face_normal
+			normal_array[c] += face_normal
+		# Normalize vertex normals
+		for i in range(normal_array.size()):
+			normal_array[i] = normal_array[i].normalized()
+
+		# Prepare mesh arrays
+		var arrays = []
 		arrays.resize(Mesh.ARRAY_MAX)
-		arrays[Mesh.ARRAY_VERTEX] = verts
-		arrays[Mesh.ARRAY_INDEX] = indices
-		arrays[Mesh.ARRAY_NORMAL] = normals
+		arrays[Mesh.ARRAY_VERTEX] = vertex_array
+		arrays[Mesh.ARRAY_NORMAL] = normal_array
+		arrays[Mesh.ARRAY_INDEX] = index_array
 
+		# Create and instance mesh
 		var mesh = ArrayMesh.new()
 		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
-		
-		# Alternative method using SurfaceTool to generate normals
-		var st = SurfaceTool.new()
-		st.begin(Mesh.PRIMITIVE_TRIANGLES)
-		for i in range(verts.size()):
-			st.set_normal(normals[i])
-			st.add_vertex(verts[i])
-		for idx in indices:
-			st.add_index(idx)
-		st.generate_normals()
-		mesh = st.commit()
 
 		var mi = MeshInstance3D.new()
 		mi.mesh = mesh
+		mi.material_override = shader
+		# Pass height data to shader
+		mi.material_override.set_shader_parameter("min_height", planet_data.min_height)
+		mi.material_override.set_shader_parameter("max_height", planet_data.max_height)
+		mi.material_override.set_shader_parameter("height_color", planet_data.planet_color)
 		add_child(mi)
 
 		chunks_list[chunk.identifier] = mi
 
+	# Recurse into children
 	for child in chunk.children:
 		visualize_quadtree(child, face_origin, axisA, axisB, radius, planet_data)
-	
-	

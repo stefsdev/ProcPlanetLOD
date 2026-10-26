@@ -13,7 +13,7 @@ var quadtree: QuadtreeChunk
 
 var chunks_list = {}
 var chunks_list_current = {}
-var material = preload("res://quadtree/chunk_vis.tres")
+#var material = preload("res://quadtree/chunk_vis.tres")
 
 
 class QuadtreeChunk :
@@ -113,7 +113,7 @@ func visualize_quadtree(chunk: QuadtreeChunk, face_origin: Vector3, axisA: Vecto
 
 		var mi = MeshInstance3D.new()
 		mi.mesh = mesh
-		mi.material_override = material
+#		mi.material_override = material
 		add_child(mi)
 
 		chunks_list[chunk.identifier] = mi

@@ -184,7 +184,16 @@ func visualize_quadtree(chunk: QuadtreeChunk, face_origin: Vector3, axisA: Vecto
 		add_child(mi)
 
 		chunks_list[chunk.identifier] = mi
+		
+		var body = StaticBody3D.new()
+		mi.add_child(body)
+		body.transform = Transform3D.IDENTITY
 
+		var cs = CollisionShape3D.new()
+		cs.shape = mesh.create_trimesh_shape()
+		body.add_child(cs)
+		
+		
 	# Recurse into children
 	for child in chunk.children:
 		visualize_quadtree(child, face_origin, axisA, axisB, radius, planet_data)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" uid="uid://dfh1egod86hf4" path="res://Planet.gd" id="1_planet"]
 [ext_resource type="Script" uid="uid://rbpxmchirygj" path="res://PlanetData.gd" id="2_data"]
@@ -16,9 +16,15 @@ tonemap_mode = 2
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_mountains"]
 frequency = 0.03
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_detail"]
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_hills"]
 seed = 7
-frequency = 0.1
+frequency = 0.12
+fractal_octaves = 3
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_detail"]
+seed = 21
+frequency = 1.2
+fractal_octaves = 2
 
 [sub_resource type="Resource" id="Resource_mountains"]
 script = ExtResource("3_noise")
@@ -27,10 +33,18 @@ min_height = 0.3
 noise_map = SubResource("FastNoiseLite_mountains")
 is_base_layer = true
 
+[sub_resource type="Resource" id="Resource_hills"]
+script = ExtResource("3_noise")
+amplitude = 1.0
+min_height = 0.0
+strength = 0.06
+noise_map = SubResource("FastNoiseLite_hills")
+
 [sub_resource type="Resource" id="Resource_detail"]
 script = ExtResource("3_noise")
-amplitude = 0.0
-min_height = 0.3
+amplitude = 1.0
+min_height = 0.0
+strength = 0.008
 noise_map = SubResource("FastNoiseLite_detail")
 
 [sub_resource type="Gradient" id="Gradient_land"]
@@ -43,23 +57,36 @@ gradient = SubResource("Gradient_land")
 [sub_resource type="Resource" id="Resource_planet"]
 script = ExtResource("2_data")
 radius = 67
+collision_distance = 14.0
 lod_levels = [{
-"distance": 400,
+"distance": 110,
 "resolution": 5
 }, {
-"distance": 60,
+"distance": 50,
 "resolution": 5
 }, {
-"distance": 22,
+"distance": 28,
 "resolution": 9
 }, {
-"distance": 8,
+"distance": 14,
 "resolution": 9
 }, {
-"distance": 3,
+"distance": 8.5,
+"resolution": 9
+}, {
+"distance": 4.5,
+"resolution": 9
+}, {
+"distance": 2.6,
+"resolution": 9
+}, {
+"distance": 1.5,
+"resolution": 9
+}, {
+"distance": 0.8,
 "resolution": 9
 }]
-planet_noise = [SubResource("Resource_mountains"), SubResource("Resource_detail")]
+planet_noise = [SubResource("Resource_mountains"), SubResource("Resource_hills"), SubResource("Resource_detail")]
 planet_color = SubResource("GradientTexture1D_earth")
 metadata/_custom_type_script = "uid://rbpxmchirygj"
 
@@ -75,6 +102,7 @@ light_energy = 1.6
 
 [node name="Planet" type="Node3D" parent="."]
 script = ExtResource("1_planet")
+build_budget_ms = 8.0
 planet_data = SubResource("Resource_planet")
 
 [node name="Camera" type="Camera3D" parent="."]

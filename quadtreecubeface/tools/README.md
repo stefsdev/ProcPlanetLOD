@@ -44,7 +44,10 @@ Fokus auf einer Würfelkante (`--focus=47.38,47.38,0`) oder einer Würfelecke
 Im Godot-Editor öffnen und mit **F6** starten. Steuerung steht oben in `test_planet.gd` und links oben im Bild.
 Mit dem Screenshot-Werkzeug: `--scene=res://test_planet.tscn --cam=... --look=...`.
 
-Die LOD-Abstände und Auflösungen stehen im Inspektor unter *Planet > Planet Data > Lod Levels*. Je mehr
-Chunks, desto länger dauert jede LOD-Aktualisierung. Mittelwerte aus `--bench`: rund 35 ms bei 170 Chunks, rund 150 ms bei 490 Chunks. Die Werte schwanken um etwa 15 Prozent, der Median liegt weit darunter (rund 4 ms bei 170 Chunks), einzelne Aktualisierungen dauern bis 125 ms.
+Die LOD-Tabelle der Testszene geht bis auf Chunks von etwa 0,2 Einheiten Kantenlänge (rund 2,5 cm Punktabstand)
+um den Spieler (Spieler = ca. 1 Einheit hoch). Die Tabelle steht im Inspektor unter *Planet > Planet Data > Lod Levels*.
+Der Neuaufbau läuft auf mehrere Frames verteilt (`Planet.build_budget_ms`, in der Testszene 8 ms), der alte
+Planet bleibt bis zum Umschalten sichtbar. Beim Schweben (G / H) liegt der Neuaufbau etwa 0,3 bis 0,5 s hinter der
+Kamera, die Frames bleiben bei 60 fps.
 
 Der Weg über `res://tools/shot.tscn` braucht keine Änderung an `project.godot`.

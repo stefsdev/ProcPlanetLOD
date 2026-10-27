@@ -20,6 +20,7 @@ func _ready() -> void:
 		return
 
 	var world_scene: PackedScene = load(_args["scene"]) if _args.has("scene") else WORLD
+	var build_start := Time.get_ticks_usec()
 	var world := world_scene.instantiate()
 	add_child(world)
 
@@ -40,8 +41,17 @@ func _ready() -> void:
 		add_child(cam)
 	cam.global_position = _vec3(_args.get("cam", "0,0,200"))
 	var look := _vec3(_args.get("look", "0,0,0"))
-	var dir := (look - cam.global_position).normalized()
-	var up := Vector3.UP if absf(dir.dot(Vector3.UP)) < 0.99 else Vector3.FORWARD
+	if _args.has("ground"):
+		# Knapp ueber der Oberflaeche in Richtung --ground, Blick waagerecht (--tilt Grad nach unten)
+		var data: PlanetData = world.get_node("Planet").planet_data
+		var dir := _find_land(data, int(_args.get("pick", 0))) if _args["ground"] == "land" else _vec3(_args["ground"]).normalized()
+		var surface := data.point_on_planet(dir)
+		cam.global_position = surface + dir * float(_args.get("alt", 1.5))
+		var tangent := dir.cross(Vector3.UP if absf(dir.y) < 0.99 else Vector3.RIGHT).normalized()
+		var tilt := deg_to_rad(float(_args.get("tilt", 10.0)))
+		look = cam.global_position + tangent * cos(tilt) * 10.0 - dir * sin(tilt) * 10.0
+	var view_dir := (look - cam.global_position).normalized()
+	var up := Vector3.UP if absf(view_dir.dot(Vector3.UP)) < 0.99 else Vector3.FORWARD
 	cam.look_at(look, up)
 	cam.make_current()
 
@@ -50,8 +60,15 @@ func _ready() -> void:
 
 	for i in int(_args.get("frames", 8)):
 		await get_tree().process_frame
+	# Der Planet baut seine Chunks ueber mehrere Frames: warten, bis er fertig ist.
+	var planet_node: Node = world.get_node("Planet")
+	var waited := 0
+	while planet_node.is_building() and waited < 3000:
+		await get_tree().process_frame
+		waited += 1
 	await RenderingServer.frame_post_draw
 
+	print("shot: Planet fertig nach %.0f ms (Start bis Foto)" % ((Time.get_ticks_usec() - build_start) / 1000.0))
 	var chunks := 0
 	for face in world.get_node("Planet").get_children():
 		if face is PlanetMeshFace:
@@ -165,23 +182,33 @@ func _cell(p: Vector3) -> Vector3i:
 	return Vector3i(floori(p.x / CHECK_CELL), floori(p.y / CHECK_CELL), floori(p.z / CHECK_CELL))
 
 
-## Zeit pro LOD-Aktualisierung beim Wandern ueber die Oberflaeche (Ruckler-Test).
+## Arbeit des Planeten pro Frame beim Wandern ueber die Oberflaeche (Ruckler-Test).
+## Jeder Schritt setzt den Fokus neu und laesst den Planeten einen Frame rechnen.
+## Danach wird gezaehlt, wie viele Frames der Planet braucht, bis er fertig ist.
 func _bench(planet: Node) -> void:
 	var data: PlanetData = planet.planet_data
 	var times: Array[float] = []
-	var rebuilds := 0
-	for i in 120:
-		var a := float(i) / 120.0 * 1.2
-		var pos := Vector3(sin(a), cos(a), 0.0) * 67.0
+	var surface := 67.0 + 1.7
+	for i in 240:
+		var a := float(i) / 240.0 * 1.2
+		var pos := Vector3(sin(a), cos(a), 0.0) * surface
 		var t0 := Time.get_ticks_usec()
 		data.lod_focus = pos
+		planet._process(0.016)
 		times.append((Time.get_ticks_usec() - t0) / 1000.0)
+	var catch_up := 0
+	var catch_ms := 0.0
+	while planet.is_building() and catch_up < 5000:
+		var t1 := Time.get_ticks_usec()
+		planet._process(0.016)
+		catch_ms += (Time.get_ticks_usec() - t1) / 1000.0
+		catch_up += 1
 	times.sort()
 	var sum := 0.0
 	for t in times:
 		sum += t
-	print("bench: 120 Schritte, mittel %.2f ms, median %.2f ms, p95 %.2f ms, max %.2f ms" % [
-		sum / times.size(), times[times.size() / 2], times[int(times.size() * 0.95)], times[-1]])
+	print("bench: 240 Schritte, Arbeit pro Frame: mittel %.2f ms, median %.2f ms, p95 %.2f ms, max %.2f ms; Aufholen: %d Frames (%.0f ms)" % [
+		sum / times.size(), times[times.size() / 2], times[int(times.size() * 0.95)], times[-1], catch_up, catch_ms])
 
 
 ## Gebirge zum Testen: ohne Rauschen ist der Planet eine glatte Kugel.
@@ -198,6 +225,27 @@ func _add_test_noise(planet: Node) -> void:
 	# Neu aufbauen, damit das Rauschen auch bei bereits gebauten Chunks greift
 	planet.call("_init_faces")
 	planet.call("_on_resource_changed")
+
+
+## --ground=land: sucht Landpunkte mitten im Land (nicht am Strand). --pick=n nimmt den n-ten Treffer.
+func _find_land(data: PlanetData, pick: int) -> Vector3:
+	var found := 0
+	var n := 6000
+	for i in n:
+		# Fibonacci-Kugel: gleichmaessig verteilte Richtungen
+		var y := 1.0 - 2.0 * (i + 0.5) / n
+		var r := sqrt(1.0 - y * y)
+		var a := i * 2.399963
+		var dir := Vector3(cos(a) * r, y, sin(a) * r)
+		var inland := true
+		for off in [Vector3(0.04, 0, 0), Vector3(-0.04, 0, 0), Vector3(0, 0, 0.04), Vector3(0, 0, -0.04)]:
+			if data.point_on_planet((dir + off).normalized()).length() < data.radius + 0.6:
+				inland = false
+		if inland and data.point_on_planet(dir).length() < data.radius + 4.0:
+			if found == pick:
+				return dir
+			found += 1
+	return Vector3.UP
 
 
 func _parse_args() -> Dictionary:

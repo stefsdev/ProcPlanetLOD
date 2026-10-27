@@ -1,17 +1,14 @@
 [gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://24khlq3s70fp"]
 
 [ext_resource type="Shader" uid="uid://d3anjm2fc5nku" path="res://planet.gdshader" id="1_p4gwj"]
-
-[sub_resource type="Gradient" id="Gradient_e08lw"]
-offsets = PackedFloat32Array(0.343598, 0.350081, 0.387358, 0.400324, 0.579327, 0.627404, 0.677885, 0.745192)
-colors = PackedColorArray(0.188078, 0.510593, 1, 1, 0.94, 0.827983, 0.423, 1, 0.888453, 0.831912, 0.388569, 1, 0.741176, 0.843137, 0.290196, 1, 0.282353, 0.407843, 0.121569, 1, 0.627451, 0.521569, 0.396078, 1, 0.52549, 0.52549, 0.419608, 1, 1, 1, 1, 1)
+[ext_resource type="Gradient" uid="uid://bic0nbwdro1d8" path="res://earth.tres" id="2_rbkur"]
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_e3xe6"]
-gradient = SubResource("Gradient_e08lw")
+gradient = ExtResource("2_rbkur")
 
 [resource]
 render_priority = 0
 shader = ExtResource("1_p4gwj")
 shader_parameter/min_height = 67.0
-shader_parameter/max_height = 77.2364
+shader_parameter/max_height = 72.5762
 shader_parameter/height_color = SubResource("GradientTexture1D_e3xe6")

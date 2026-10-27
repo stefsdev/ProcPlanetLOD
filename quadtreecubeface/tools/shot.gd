@@ -72,6 +72,8 @@ func _ready() -> void:
 ## fertigen Meshes und ist damit unabhängig vom Code, der sie erzeugt.
 const CHECK_CELL := 4.0
 const CHECK_TOL := 0.01
+## Halber Abstand der Stuetzstellen (CHECK_CELL / 8) plus Reserve
+const CHECK_MARGIN := CHECK_CELL * 0.0625 + 0.05
 
 
 func _check_cracks(planet: Node) -> void:
@@ -107,23 +109,28 @@ func _check_cracks(planet: Node) -> void:
 		var a: Vector3 = segs[si][0]
 		var b: Vector3 = segs[si][1]
 		var steps := int(ceil(a.distance_to(b) / (CHECK_CELL * 0.125))) + 1
-		var last := Vector3i(1 << 30, 0, 0)
+		# Jede Stuetzstelle traegt sich mit Rand ein (halber Abstand + Toleranz), damit
+		# keine Strecke durchrutscht, die knapp an einer Zellgrenze verlaeuft.
 		for s in steps + 1:
-			var cell := _cell(a.lerp(b, float(s) / steps))
-			if cell != last:
-				last = cell
-				if not grid.has(cell):
-					grid[cell] = []
-				if grid[cell].is_empty() or grid[cell][-1] != si:
-					grid[cell].append(si)
+			var pt := a.lerp(b, float(s) / steps)
+			var lo_c := _cell(pt - Vector3.ONE * CHECK_MARGIN)
+			var hi_c := _cell(pt + Vector3.ONE * CHECK_MARGIN)
+			for x in range(lo_c.x, hi_c.x + 1):
+				for y in range(lo_c.y, hi_c.y + 1):
+					for z in range(lo_c.z, hi_c.z + 1):
+						var cell := Vector3i(x, y, z)
+						if not grid.has(cell):
+							grid[cell] = []
+						if grid[cell].is_empty() or grid[cell][-1] != si:
+							grid[cell].append(si)
 
 	var cracks := 0
 	var worst := 0.0
 	var samples: PackedStringArray = []
 	for entry in verts:
 		var p: Vector3 = entry[0]
-		var lo := _cell(p - Vector3.ONE * 0.05)
-		var hi := _cell(p + Vector3.ONE * 0.05)
+		var lo := _cell(p)
+		var hi := lo
 		var best := INF
 		for x in range(lo.x, hi.x + 1):
 			for y in range(lo.y, hi.y + 1):

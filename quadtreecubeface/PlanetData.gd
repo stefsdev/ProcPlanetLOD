@@ -43,16 +43,21 @@ var max_lod : int :
 
 @export var planet_noise: Array = [] :
 	set(val):
-		planet_noise = val
-		for n in planet_noise:
-			if n:  # Disconnect the old resource signal if it exists
+		for n in planet_noise:  # Disconnect the old resource signals if they exist
+			if n and n.changed.is_connected(_on_resource_changed):
 				n.changed.disconnect(_on_resource_changed)
-			
-			if n:  # Connect the new resource signal
+		planet_noise = val
+		for n in planet_noise:  # Connect the new resource signals
+			if n and not n.changed.is_connected(_on_resource_changed):
 				n.changed.connect(_on_resource_changed)
 		
 func _on_resource_changed():
 	emit_changed()
+
+## Kollision gibt es nur fuer Chunks, die hoechstens so weit vom Fokus entfernt sind
+## (Einheiten). 0 = fuer alle Chunks, wie bisher. Kollisionsformen sind der teuerste
+## Teil beim Bauen eines Chunks, ein Spiel braucht sie nur in der Naehe des Spielers.
+@export var collision_distance := 0.0
 
 var min_height := 9999.0
 var max_height := 0.0
@@ -64,17 +69,23 @@ var max_height := 0.0
 func point_on_planet(point_on_sphere : Vector3) -> Vector3:
 	var elevation : float = 0.0
 	var base_layer_mask : float = 0.0
-	if planet_noise.size() > 0:
-		for n in planet_noise:
-			if n.is_base_layer:
-				var level_base_elevation = n.noise_map.get_noise_3dv(point_on_sphere*100.0)
-				level_base_elevation = level_base_elevation + 1 / 2.0 * n.amplitude
-				level_base_elevation = max(0.0, level_base_elevation - n.min_height) 
-				base_layer_mask += level_base_elevation
+	var p := point_on_sphere * 100.0
+	# Rauschwerte der Basisebenen merken, damit sie nicht zweimal berechnet werden
+	var base_values := PackedFloat32Array()
+	base_values.resize(planet_noise.size())
+	var i := 0
 	for n in planet_noise:
-		var level_elevation = n.noise_map.get_noise_3dv(point_on_sphere * 100.0)
-		level_elevation = level_elevation + 1 / 2.0 * n.amplitude
-		level_elevation = max(0.0, level_elevation - n.min_height) * base_layer_mask
-		elevation += level_elevation
+		if n.is_base_layer:
+			var v: float = n.noise_map.get_noise_3dv(p)
+			base_values[i] = v
+			base_layer_mask += maxf(0.0, v + 1 / 2.0 * n.amplitude - n.min_height)
+		i += 1
+	# Ohne Basisebene (Meer) ist alles flach: die uebrigen Ebenen werden mit der Maske multipliziert
+	if base_layer_mask > 0.0:
+		i = 0
+		for n in planet_noise:
+			var v: float = base_values[i] if n.is_base_layer else n.noise_map.get_noise_3dv(p)
+			elevation += maxf(0.0, v + 1 / 2.0 * n.amplitude - n.min_height) * base_layer_mask * n.strength
+			i += 1
 	return point_on_sphere * radius * (elevation + 1.0) 
 	#return point_on_sphere * radius

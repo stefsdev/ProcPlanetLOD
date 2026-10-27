@@ -8,6 +8,13 @@ class_name PlanetNoise
 		amplitude = val
 		emit_changed()
 
+## Faktor auf die Höhe dieser Ebene (1 = wie bisher). Damit lässt sich feines Detail
+## klein halten, ohne dass es durch amplitude und min_height verschwindet.
+@export var strength := 1.0 :
+	set(val):
+		strength = val
+		emit_changed()
+
 @export var min_height := 0.0 : 
 	set(val): 
 		min_height = val

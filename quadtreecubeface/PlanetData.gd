@@ -43,12 +43,12 @@ var max_lod : int :
 
 @export var planet_noise: Array = [] :
 	set(val):
-		planet_noise = val
-		for n in planet_noise:
-			if n:  # Disconnect the old resource signal if it exists
+		for n in planet_noise:  # Disconnect the old resource signals if they exist
+			if n and n.changed.is_connected(_on_resource_changed):
 				n.changed.disconnect(_on_resource_changed)
-			
-			if n:  # Connect the new resource signal
+		planet_noise = val
+		for n in planet_noise:  # Connect the new resource signals
+			if n and not n.changed.is_connected(_on_resource_changed):
 				n.changed.connect(_on_resource_changed)
 		
 func _on_resource_changed():

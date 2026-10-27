@@ -14,15 +14,17 @@ extends RefCounted
 ## unten (y=0), oben (y=r-1), links (x=0, ohne Ecken), rechts (x=r-1, ohne Ecken).
 
 var planet_data: PlanetData
+var surface: PlanetSurface
 var faces: Dictionary  # Flaechennormale (Vector3) -> PlanetMeshFace
 var _corner_cache := {}
 var _poly_cache := {}
 var _eps: float
 
 
-func _init(p_planet_data: PlanetData, p_faces: Dictionary) -> void:
+func _init(p_planet_data: PlanetData, p_faces: Dictionary, p_surface: PlanetSurface) -> void:
 	planet_data = p_planet_data
 	faces = p_faces
+	surface = p_surface
 	# 1 % der Kantenlaenge des kleinsten Chunks
 	_eps = 2.0 / float(1 << (planet_data.max_lod + 1)) * 0.01
 
@@ -91,7 +93,7 @@ func boundary(chunk, r: int) -> Array:
 
 
 func _base(cube_pos: Vector3) -> Vector3:
-	return planet_data.point_on_planet(cube_pos.normalized())
+	return surface.at(cube_pos)
 
 
 ## Blatt des Quadtrees, in dem ein Punkt nahe der Wuerfeloberflaeche liegt.

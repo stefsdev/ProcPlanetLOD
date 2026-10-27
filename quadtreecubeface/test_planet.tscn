@@ -1,0 +1,125 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="Script" uid="uid://dfh1egod86hf4" path="res://Planet.gd" id="1_planet"]
+[ext_resource type="Script" uid="uid://rbpxmchirygj" path="res://PlanetData.gd" id="2_data"]
+[ext_resource type="Script" uid="uid://jlu5a1150vmp" path="res://PlanetNoise.gd" id="3_noise"]
+[ext_resource type="Script" path="res://test_planet.gd" id="5_script"]
+
+[sub_resource type="Environment" id="Environment_space"]
+background_mode = 1
+background_color = Color(0.015, 0.02, 0.045, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.45, 0.5, 0.62, 1)
+ambient_light_energy = 0.9
+tonemap_mode = 2
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_mountains"]
+frequency = 0.03
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_hills"]
+seed = 7
+frequency = 0.12
+fractal_octaves = 3
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_detail"]
+seed = 21
+frequency = 1.2
+fractal_octaves = 2
+
+[sub_resource type="Resource" id="Resource_mountains"]
+script = ExtResource("3_noise")
+amplitude = 0.1
+min_height = 0.3
+noise_map = SubResource("FastNoiseLite_mountains")
+is_base_layer = true
+
+[sub_resource type="Resource" id="Resource_hills"]
+script = ExtResource("3_noise")
+amplitude = 1.0
+min_height = 0.0
+strength = 0.06
+noise_map = SubResource("FastNoiseLite_hills")
+
+[sub_resource type="Resource" id="Resource_detail"]
+script = ExtResource("3_noise")
+amplitude = 1.0
+min_height = 0.0
+strength = 0.008
+noise_map = SubResource("FastNoiseLite_detail")
+
+[sub_resource type="Gradient" id="Gradient_land"]
+offsets = PackedFloat32Array(0, 0.02, 0.035, 0.12, 0.4, 0.65, 0.85, 1)
+colors = PackedColorArray(0.08, 0.3, 0.72, 1, 0.12, 0.42, 0.8, 1, 0.85, 0.78, 0.5, 1, 0.3, 0.6, 0.2, 1, 0.15, 0.4, 0.12, 1, 0.45, 0.38, 0.3, 1, 0.6, 0.6, 0.6, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_earth"]
+gradient = SubResource("Gradient_land")
+
+[sub_resource type="Resource" id="Resource_planet"]
+script = ExtResource("2_data")
+radius = 67
+collision_distance = 14.0
+lod_levels = [{
+"distance": 110,
+"resolution": 5
+}, {
+"distance": 50,
+"resolution": 5
+}, {
+"distance": 28,
+"resolution": 9
+}, {
+"distance": 14,
+"resolution": 9
+}, {
+"distance": 8.5,
+"resolution": 9
+}, {
+"distance": 4.5,
+"resolution": 9
+}, {
+"distance": 2.6,
+"resolution": 9
+}, {
+"distance": 1.5,
+"resolution": 9
+}, {
+"distance": 0.8,
+"resolution": 9
+}]
+planet_noise = [SubResource("Resource_mountains"), SubResource("Resource_hills"), SubResource("Resource_detail")]
+planet_color = SubResource("GradientTexture1D_earth")
+metadata/_custom_type_script = "uid://rbpxmchirygj"
+
+[node name="TestPlanet" type="Node3D"]
+script = ExtResource("5_script")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_space")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.7, 0.9, 0)
+light_energy = 1.6
+
+[node name="Planet" type="Node3D" parent="."]
+script = ExtResource("1_planet")
+build_budget_ms = 8.0
+planet_data = SubResource("Resource_planet")
+
+[node name="Camera" type="Camera3D" parent="."]
+position = Vector3(0, 50, 125)
+rotation = Vector3(-0.38, 0, 0)
+fov = 70.0
+near = 0.05
+far = 5000.0
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="Label" type="Label" parent="HUD"]
+offset_left = 12.0
+offset_top = 8.0
+offset_right = 900.0
+offset_bottom = 70.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+
+[connection signal="moved" from="." to="Planet" method="_on_player_moved"]

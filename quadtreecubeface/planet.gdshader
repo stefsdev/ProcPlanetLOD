@@ -2,7 +2,9 @@ shader_type spatial;
 
 uniform float min_height;
 uniform float max_height;
-uniform sampler2D height_color;
+// Ohne repeat_disable mischt die Textur am Rand (t = 0, also dem Meeresspiegel)
+// die letzte Farbe der Tabelle hinein; source_color zeigt die Farben wie im Editor.
+uniform sampler2D height_color : source_color, repeat_disable;
 
 varying float height;
 

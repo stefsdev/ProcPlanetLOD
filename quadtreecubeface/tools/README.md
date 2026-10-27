@@ -18,7 +18,23 @@ godot --path . --resolution 1280x720 res://tools/shot.tscn -- --out=C:/Temp/bild
 | `--fov=` | Sichtfeld in Grad | `70` |
 | `--wire` | Drahtgitter statt Fläche (Lücken und Übergänge erkennen) | aus |
 | `--frames=` | Frames bis zum Foto, damit der Quadtree fertig aufgebaut ist | `8` |
+| `--noise` | Testgebirge einschalten (ohne Rauschen ist der Planet eine glatte Kugel) | aus |
+| `--check` | Rissprüfer: zählt Randpunkte von Chunks, die nicht auf dem Rand eines Nachbarn liegen | aus |
+| `--bench` | Misst die Zeit pro LOD-Aktualisierung beim Wandern über die Oberfläche | aus |
 
 Die Ausgabe nennt Chunk-Anzahl, Fokus, Kamera und Höhenbereich. Der Planet hat Radius 67.
+
+## Rissprüfer
+
+`--check` arbeitet nur mit den fertigen Meshes. Eine Zeile wie
+
+```
+check: chunks=156 randpunkte=1408 luecken=0 max_abstand=0.000
+```
+
+heißt: Jeder Randpunkt liegt auf dem Rand eines anderen Chunks, der Planet ist an den
+LOD-Grenzen dicht. `luecken` größer als 0 bedeutet sichtbare Risse. Gute Ansichten zum Prüfen:
+Fokus auf einer Würfelkante (`--focus=47.38,47.38,0`) oder einer Würfelecke
+(`--focus=38.68,38.68,38.68`), weil dort mehrere Würfelseiten aufeinandertreffen.
 
 Der Weg über `res://tools/shot.tscn` braucht keine Änderung an `project.godot`.

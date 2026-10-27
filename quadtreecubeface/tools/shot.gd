@@ -19,20 +19,25 @@ func _ready() -> void:
 		get_tree().quit(2)
 		return
 
-	var world := WORLD.instantiate()
+	var world_scene: PackedScene = load(_args["scene"]) if _args.has("scene") else WORLD
+	var world := world_scene.instantiate()
 	add_child(world)
 
 	if _args.has("noise"):
 		_add_test_noise(world.get_node("Planet"))
 
-	var player_vis: Node3D = world.get_node("Player/PlayerVis")
-	if _args.has("focus"):
+	# Eigene Szene (--scene=): deren Kamera setzen, sie liefert auch den LOD-Fokus.
+	var player_vis: Node3D = world.get_node_or_null("Player/PlayerVis")
+	if player_vis == null:
+		player_vis = world.get_node("Camera")
+	if _args.has("focus") and not _args.has("scene"):
 		player_vis.global_position = _vec3(_args["focus"])
 
-	var cam := Camera3D.new()
+	var cam: Camera3D = world.get_node("Camera") if _args.has("scene") else Camera3D.new()
 	cam.fov = float(_args.get("fov", 70.0))
 	cam.far = 10000.0
-	add_child(cam)
+	if cam.get_parent() == null:
+		add_child(cam)
 	cam.global_position = _vec3(_args.get("cam", "0,0,200"))
 	var look := _vec3(_args.get("look", "0,0,0"))
 	var dir := (look - cam.global_position).normalized()

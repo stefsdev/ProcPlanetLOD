@@ -45,6 +45,6 @@ Im Godot-Editor öffnen und mit **F6** starten. Steuerung steht oben in `test_pl
 Mit dem Screenshot-Werkzeug: `--scene=res://test_planet.tscn --cam=... --look=...`.
 
 Die LOD-Abstände und Auflösungen stehen im Inspektor unter *Planet > Planet Data > Lod Levels*. Je mehr
-Chunks, desto länger dauert jede LOD-Aktualisierung (rund 35 ms bei 170 Chunks, 150 ms bei 490).
+Chunks, desto länger dauert jede LOD-Aktualisierung. Mittelwerte aus `--bench`: rund 35 ms bei 170 Chunks, rund 150 ms bei 490 Chunks. Die Werte schwanken um etwa 15 Prozent, der Median liegt weit darunter (rund 4 ms bei 170 Chunks), einzelne Aktualisierungen dauern bis 125 ms.
 
 Der Weg über `res://tools/shot.tscn` braucht keine Änderung an `project.godot`.
